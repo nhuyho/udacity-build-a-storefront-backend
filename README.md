@@ -37,12 +37,12 @@ This section contains all the packages used in this project and how to install t
 `npm install --save morgan`
 `npm -i -D @types/morgan`
 
+### nodemon 
+`npm i nodemon`
+
 #### jsonwebtoken
 `npm install jsonwebtoken --sav`
 `npm -i -D @types/jsonwebtoken`
-
-#### cross-env
-`npm install --save-dev cross-env`
 
 #### jasmine
 `npm install jasmine @types/jasmine @ert78gb/jasmine-ts ts-node --save-dev`
@@ -53,22 +53,19 @@ This section contains all the packages used in this project and how to install t
 
 
 ## Set up Database
+
+`docker-compose up`  to start the docker container
+`npm install` to install all dependencies
+`npm run db-up` to set up the database and get access via http://127.0.0.1:5432
+`npm run build` to build the app
+
+
+### Start 
+`npm run start` to start the app and get access via http://127.0.0.1:
 ### Create Databases
 We shall create the dev and test database.
 
-- connect to the default postgres database as the server's root user `psql -U postgres`
-- In psql run the following to create a user 
-    - `CREATE USER shopping_user WITH PASSWORD 'password123';`
-- In psql run the following to create the dev and test database
-    - `CREATE DATABASE shopping;`
-    - `CREATE DATABASE shopping_test;`
-- Connect to the databases and grant all privileges
-    - Grant for dev database
-        - `\c shopping`
-        - `GRANT ALL PRIVILEGES ON DATABASE shopping TO shopping_user;`
-    - Grant for test database
-        - `\c shopping_test`
-        - `GRANT ALL PRIVILEGES ON DATABASE shopping_test TO shopping_user;`
+- connect to the default postgres database as the server's root user `psql -U storefront`
 
 ### Migrate Database
 Navigate to the root directory and run the command below to migrate the database 
@@ -77,15 +74,15 @@ Navigate to the root directory and run the command below to migrate the database
 
 !['migrate database'](./docs/migrate_up.png)
 
-## Enviromental Variables Set up
+## Environmental Variables Set up
 Bellow are the environmental variables that needs to be set in a `.env` file. This is the default setting that I used for development, but you can change it to what works for you. 
 
 **NB:** The given values are used in development and testing but not in production. 
 ```
 PORT = 127.0.0.1
-POSTGRES_HOST= "localhost"
+POSTGRES_HOST= "127.0.0.1"
 POSTGRES_USER= "nhuy"
-POSTGRES_PASSWORD="1 2345"
+POSTGRES_PASSWORD="12345"
 POSTGRES_DB="storefront"
 
 ```
@@ -110,7 +107,7 @@ Authorization   Bearer <token>
 ## Testing
 Run test with 
 
-`yarn test`
+`npm run test`
 
 It sets the environment to `test`, migrates up tables for the test database, run the test then migrate down all the tables for the test database. 
 

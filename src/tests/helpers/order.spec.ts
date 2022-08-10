@@ -2,35 +2,25 @@ import supertest from 'supertest';
 import jwt, { Secret } from 'jsonwebtoken';
 
 import { BaseOrder } from '../../models/order';
-import { BaseAuthUser } from '../../models/user';
-import { BaseProduct } from '../../models/product';
 import app from '../../app';
 
 const request = supertest(app);
 const SECRET = process.env.TOKEN_KEY as Secret;
 
 describe('Order Handler', () => {
-  let token: string,
-    order: BaseOrder,
-    user_id: number,
-    product_id: number,
-    order_id: number;
+  let token: string;
+  let order: BaseOrder;
+  let user_id: number;
+  let product_id: number;
+  let order_id: number;
 
   beforeAll(async () => {
-    const userData: BaseAuthUser = {
+    const { body: userBody } = await request.post('/users/create').send({
       userName: 'ChrisAnne',
       firstName: 'Chris',
       lastName: 'Anne',
       password: 'password123',
-    };
-    const productData: BaseProduct = {
-      name: 'Basil Barramunda',
-      price: 29,
-    };
-
-    const { body: userBody } = await request
-      .post('/users/create')
-      .send(userData);
+    });
 
     token = userBody;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -41,7 +31,10 @@ describe('Order Handler', () => {
     const { body: productBody } = await request
       .post('/products/create')
       .set('Authorization', 'bearer ' + token)
-      .send(productData);
+      .send({
+        name: 'Basil Barramunda',
+        price: 29,
+      });
     product_id = productBody.id;
 
     order = {
@@ -74,7 +67,6 @@ describe('Order Handler', () => {
         const { body, status } = res;
         expect(status).toBe(200);
         order_id = body.id;
-
         done();
       });
   });

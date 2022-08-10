@@ -7,9 +7,9 @@ dotenv.config();
 
 const SECRET = process.env.TOKEN_KEY as Secret;
 
-export function getTokenByUser(user: User) {
+export const getTokenByUser = (user: User) => {
   return jwt.sign({ user }, SECRET);
-}
+};
 
 export const verifyToken = (req: Request, res: Response, next) => {
   if (!req.body.token) {

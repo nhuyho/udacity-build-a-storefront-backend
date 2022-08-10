@@ -81,18 +81,14 @@ describe('Order Model', () => {
   it('index method should return a list of orders', async () => {
     const createdOrder: Order = await createOrder(order);
     const orderList = await orderStore.index();
-
     expect(orderList).toEqual([createdOrder]);
-
     await deleteOrder(createdOrder.id);
   });
 
   it('show method should return the correct orders', async () => {
     const createdOrder: Order = await createOrder(order);
     const orderFromDb = await orderStore.read(createdOrder.id);
-
     expect(orderFromDb).toEqual(createdOrder);
-
     await deleteOrder(createdOrder.id);
   });
 

@@ -2,11 +2,11 @@ import { Application, Request, Response } from 'express';
 import { verifyToken, getTokenByUser } from '../handlers/helpers';
 import { User, UserStore } from '../models/user';
 
-const UserStoreInstance = new UserStore();
+const userStore = new UserStore();
 
 const index = async (req: Request, res: Response) => {
   try {
-    const users: User[] = await UserStoreInstance.index();
+    const users: User[] = await userStore.index();
     res.json(users);
   } catch (err) {
     res.status(400).json(err);
@@ -27,7 +27,7 @@ const create = async (req: Request, res: Response) => {
       );
       return false;
     }
-    const user: User = await UserStoreInstance.create({
+    const user: User = await userStore.create({
       firstName,
       lastName,
       userName,
@@ -47,7 +47,7 @@ const read = async (req: Request, res: Response) => {
     if (!id) {
       return res.status(400).send('Missing required parameter :id.');
     }
-    const user: User = await UserStoreInstance.read(id);
+    const user: User = await userStore.read(id);
     res.json(user);
   } catch (e) {
     res.status(400);
@@ -67,7 +67,7 @@ const update = async (req: Request, res: Response) => {
       );
       return false;
     }
-    const user: User = await UserStoreInstance.update(id, {
+    const user: User = await userStore.update(id, {
       firstName,
       lastName,
     });
@@ -84,7 +84,7 @@ const deleteUser = async (req: Request, res: Response) => {
       res.status(400).send('Missing required parameter :id.');
       return false;
     }
-    await UserStoreInstance.deleteUser(id);
+    await userStore.deleteUser(id);
     res.send(`User with id ${id} successfully deleted.`);
   } catch (err) {
     res.status(400).json(err);
@@ -102,10 +102,7 @@ const authenticate = async (req: Request, res: Response) => {
       );
       return false;
     }
-    const user: User | null = await UserStoreInstance.authenticate(
-      username,
-      password
-    );
+    const user: User | null = await userStore.authenticate(username, password);
     if (!user) {
       return res.status(401).send(`Wrong password for user ${username}.`);
     }

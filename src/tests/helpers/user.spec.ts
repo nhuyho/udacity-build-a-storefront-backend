@@ -117,7 +117,7 @@ describe('User Handler', () => {
 
   it('gets the auth endpoint with wrong password', (done) => {
     request
-      .post('/users/auth')
+      .post('/users/authenticate')
       .send({
         username: userData.userName,
         password: 'trtdtxcfcf',
