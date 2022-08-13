@@ -26,7 +26,7 @@ productRoutes(app);
 orderRoutes(app);
 
 app.listen(port, () => {
-  console.info(`Starting app on: ${address}`);
+  console.info(`Express is listening at http://${address}`);
 });
 
 export default app;

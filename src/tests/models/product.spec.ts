@@ -48,7 +48,7 @@ describe('Product Model', () => {
     await deleteProduct(createdProduct.id);
   });
 
-  it('show method should return the correct product', async () => {
+  it('should return the correct product', async () => {
     const createdProduct: Product = await createProduct(product);
     const productData = await productStore.read(createdProduct.id);
     expect(productData).toEqual(createdProduct);

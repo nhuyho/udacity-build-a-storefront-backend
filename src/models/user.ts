@@ -4,13 +4,13 @@ import Client from '../database';
 const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
 
 export interface BaseUser {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
 }
 export interface BaseAuthUser {
-  firstName: string;
-  lastName: string;
-  userName: string;
+  firstname: string;
+  lastname: string;
+  username: string;
   password: string;
 }
 export interface User extends BaseAuthUser {
@@ -18,7 +18,7 @@ export interface User extends BaseAuthUser {
 }
 
 export class UserStore {
-  async index(): Promise<User[]> {
+  async getUser(): Promise<User[]> {
     try {
       const connection = await Client.connect();
       const sql = 'SELECT * FROM users';
@@ -37,22 +37,21 @@ export class UserStore {
       const conn = await Client.connect();
       const sql =
         'INSERT INTO users (firstName, lastName, userName, password_digest) VALUES($1, $2, $3, $4) RETURNING *';
-      const hash = bcrypt.hashSync(
-        u.password + BCRYPT_PASSWORD,
-        parseInt(SALT_ROUNDS)
-      );
+      const pepper: string = process.env.BCRYPT_PASSWORD as string;
+      const salt: string = process.env.SALT_ROUNDS as string;
+      const hash = bcrypt.hashSync(u.password + pepper, parseInt(salt));
 
       const result = await conn.query(sql, [
-        u.firstName,
-        u.lastName,
-        u.userName,
+        u.firstname,
+        u.lastname,
+        u.username,
         hash,
       ]);
       const user = result.rows[0];
       conn.release();
       return user;
     } catch (err) {
-      throw new Error(`unable create user (${u.userName}): ${err}`);
+      throw new Error(`unable create user (${u.username}): ${err}`);
     }
   }
 
@@ -74,15 +73,15 @@ export class UserStore {
         'UPDATE users SET firstName = $1, lastName = $2 WHERE id = $3 RETURNING *';
       const connection = await Client.connect();
       const { rows } = await connection.query(sql, [
-        newUserData.firstName,
-        newUserData.lastName,
+        newUserData.firstname,
+        newUserData.lastname,
         id,
       ]);
       connection.release();
       return rows[0];
     } catch (err) {
       throw new Error(
-        `Could not update user ${newUserData.firstName} ${newUserData.lastName}. ${err}`
+        `Could not update user ${newUserData.firstname} ${newUserData.lastname}. ${err}`
       );
     }
   }

@@ -1,9 +1,8 @@
 import supertest from 'supertest';
 import jwt, { Secret } from 'jsonwebtoken';
-
 import { BaseProduct } from '../../models/product';
 import { BaseAuthUser } from '../../models/user';
-import app from '../../app';
+import app from '../../server';
 
 const request = supertest(app);
 const SECRET = process.env.TOKEN_KEY as Secret;
@@ -18,9 +17,9 @@ describe('Product Handler', () => {
 
   beforeAll(async () => {
     const userData: BaseAuthUser = {
-      userName: 'ChrisAnne',
-      firstName: 'Chris',
-      lastName: 'Anne',
+      username: 'ChrisAnne',
+      firstname: 'Chris',
+      lastname: 'Anne',
       password: 'password123',
     };
 
@@ -30,7 +29,7 @@ describe('Product Handler', () => {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const { user } = jwt.verify(token, SECRET);
+    const { user } = jwt.verify(body, SECRET);
     userId = user.id;
   });
 

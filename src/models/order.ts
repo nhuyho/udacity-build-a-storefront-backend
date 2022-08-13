@@ -16,7 +16,7 @@ export interface Order extends BaseOrder {
 }
 
 export class OrderStore {
-  async index(): Promise<Order[]> {
+  async getOrder(): Promise<Order[]> {
     try {
       const connection = await Client.connect();
       const sql = 'SELECT * FROM orders';
@@ -54,7 +54,7 @@ export class OrderStore {
       const orderProductsSql =
         'INSERT INTO order_products (order_id, product_id, quantity) VALUES($1, $2, $3) RETURNING product_id, quantity';
 
-      const orderProducts = [];
+      const orderProducts: Order[] = [];
 
       products.forEach(async (product) => {
         const { rows } = await connection.query(orderProductsSql, [

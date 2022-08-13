@@ -10,19 +10,19 @@ describe('Order Model', () => {
 
   let order: BaseOrder, user_id: number, product_id: number;
 
-  async function createOrder(order: BaseOrder) {
+  function createOrder(order: BaseOrder) {
     return orderStore.create(order);
   }
 
-  async function deleteOrder(id: number) {
+  function deleteOrder(id: number) {
     return orderStore.deleteOrder(id);
   }
 
   beforeAll(async () => {
     const user: User = await userStore.create({
-      userName: 'ChrisAnne',
-      firstName: 'Chris',
-      lastName: 'Anne',
+      username: 'ChrisAnne',
+      firstname: 'Chris',
+      lastname: 'Anne',
       password: 'password123',
     });
 
@@ -53,7 +53,7 @@ describe('Order Model', () => {
   });
 
   it('should have an index method', () => {
-    expect(orderStore.index).toBeDefined();
+    expect(orderStore.getOrder).toBeDefined();
   });
 
   it('should have a show method', () => {
@@ -80,15 +80,15 @@ describe('Order Model', () => {
 
   it('index method should return a list of orders', async () => {
     const createdOrder: Order = await createOrder(order);
-    const orderList = await orderStore.index();
+    const orderList = await orderStore.getOrder();
     expect(orderList).toEqual([createdOrder]);
     await deleteOrder(createdOrder.id);
   });
 
   it('show method should return the correct orders', async () => {
     const createdOrder: Order = await createOrder(order);
-    const orderFromDb = await orderStore.read(createdOrder.id);
-    expect(orderFromDb).toEqual(createdOrder);
+    const orderData = await orderStore.read(createdOrder.id);
+    expect(orderData).toEqual(createdOrder);
     await deleteOrder(createdOrder.id);
   });
 
@@ -116,7 +116,7 @@ describe('Order Model', () => {
   it('delete method should remove the order item', async () => {
     const createdOrder: Order = await createOrder(order);
     await deleteOrder(createdOrder.id);
-    const orderList = await orderStore.index();
+    const orderList = await orderStore.getOrder();
     expect(orderList).toEqual([]);
   });
 });

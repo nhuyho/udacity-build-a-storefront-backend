@@ -6,7 +6,7 @@ const userStore = new UserStore();
 
 const index = async (req: Request, res: Response) => {
   try {
-    const users: User[] = await userStore.index();
+    const users: User[] = await userStore.getUser();
     res.json(users);
   } catch (err) {
     res.status(400).json(err);
@@ -15,12 +15,12 @@ const index = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
   try {
-    const firstName = req.body.firstName as unknown as string;
-    const lastName = req.body.lastName as unknown as string;
-    const userName = req.body.userName as unknown as string;
+    const firstname = req.body.firstname as unknown as string;
+    const lastname = req.body.lastname as unknown as string;
+    const username = req.body.username as unknown as string;
     const password = req.body.password as unknown as string;
 
-    if (!firstName || !lastName || !userName || !password) {
+    if (!firstname || !lastname || !username || !password) {
       res.status(400);
       res.send(
         'Some required parameters are missing! eg. :firstName, :lastName, :userName, :password'
@@ -28,9 +28,9 @@ const create = async (req: Request, res: Response) => {
       return false;
     }
     const user: User = await userStore.create({
-      firstName,
-      lastName,
-      userName,
+      firstname,
+      lastname,
+      username,
       password,
     });
 
@@ -58,9 +58,9 @@ const read = async (req: Request, res: Response) => {
 const update = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as unknown as number;
-    const firstName = req.body.firstName as unknown as string;
-    const lastName = req.body.lastName as unknown as string;
-    if (!firstName || !lastName || !id) {
+    const firstname = req.body.firstname as unknown as string;
+    const lastname = req.body.lastname as unknown as string;
+    if (!firstname || !lastname || !id) {
       res.status(400);
       res.send(
         'Some required parameters are missing! eg. :firstName, :lastName, :id'
@@ -68,8 +68,8 @@ const update = async (req: Request, res: Response) => {
       return false;
     }
     const user: User = await userStore.update(id, {
-      firstName,
-      lastName,
+      firstname,
+      lastname,
     });
     res.json(user);
   } catch (err) {
@@ -93,7 +93,7 @@ const deleteUser = async (req: Request, res: Response) => {
 
 const authenticate = async (req: Request, res: Response) => {
   try {
-    const username = (req.body.userName as unknown as string) || 'ChrissAnne';
+    const username = (req.body.username as unknown as string) || 'ChrissAnne';
     const password = (req.body.password as unknown as string) || 'password123';
     if (!username || !password) {
       res.status(400);
@@ -115,7 +115,7 @@ const authenticate = async (req: Request, res: Response) => {
 export default function userRoutes(app: Application) {
   app.get('/users', index);
   app.get('/users/:id', read);
-  app.post('/users', create);
+  app.post('/users/create', create);
   app.post('/users/authenticate', authenticate);
   app.put('/users/:id', verifyToken, update);
   app.delete('/users/:id', verifyToken, deleteUser);

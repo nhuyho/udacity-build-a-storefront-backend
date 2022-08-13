@@ -6,7 +6,7 @@ const OrderStoreInstance = new OrderStore();
 
 const index = async (req: Request, res: Response) => {
   try {
-    const orders: Order[] = await OrderStoreInstance.index();
+    const orders: Order[] = await OrderStoreInstance.getOrder();
     res.json(orders);
   } catch (err) {
     res.status(400);
