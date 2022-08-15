@@ -38,12 +38,12 @@ Table: Product (id:serial[primary key], name:varchar(50)[not null], price:numeri
 ```
 #### User
 - id
-- firstName
-- lastName
+- firstname
+- lastname
 - password
 
 ```
-Table: User (id:serial[primary key], firstName: varchar (50)[not null], lastName:varchar(50)[not null], password:varchar(60)[not null])
+Table: User (id:serial[primary key], firstname: varchar (50)[not null], lastname:varchar(50)[not null], password:varchar(60)[not null])
 ```
 #### Orders
 - id

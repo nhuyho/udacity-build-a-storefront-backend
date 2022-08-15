@@ -93,8 +93,6 @@ SALT_ROUNDS="10"
 ## Start App
 `yarn watch` or `npm run start`
 
-!['start server'](./docs/start.png)
-
 ### Running Ports 
 After start up, the server will start on port `3000` and the database on port `5432`
 
