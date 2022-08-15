@@ -68,7 +68,7 @@ describe('Order Model', () => {
     expect(orderStore.deleteOrder).toBeDefined();
   });
 
-  it('add method should add a order', async () => {
+  it('should add a order', async () => {
     const createdOrder: Order = await createOrder(order);
     expect(createdOrder).toEqual({
       id: createdOrder.id,
@@ -78,7 +78,7 @@ describe('Order Model', () => {
     await deleteOrder(createdOrder.id);
   });
 
-  it('index method should return a list of orders', async () => {
+  it('should return a list of orders', async () => {
     const createdOrder: Order = await createOrder(order);
     const orderList = await orderStore.getOrder();
     expect(orderList).toEqual([createdOrder]);
@@ -92,7 +92,7 @@ describe('Order Model', () => {
     await deleteOrder(createdOrder.id);
   });
 
-  it('update method should update the order', async () => {
+  it('should update the order', async () => {
     const createdOrder: Order = await createOrder(order);
     const orderData: BaseOrder = {
       products: [
@@ -104,16 +104,13 @@ describe('Order Model', () => {
       user_id,
       status: false,
     };
-    const { products, status } = await orderStore.update(
-      createdOrder.id,
-      orderData
-    );
+    const { products, status } = await orderStore.update(createdOrder.id, orderData);
     expect(products).toEqual(orderData.products);
     expect(status).toEqual(orderData.status);
     await deleteOrder(createdOrder.id);
   });
 
-  it('delete method should remove the order item', async () => {
+  it('should remove the order item', async () => {
     const createdOrder: Order = await createOrder(order);
     await deleteOrder(createdOrder.id);
     const orderList = await orderStore.getOrder();

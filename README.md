@@ -56,7 +56,7 @@ This section contains all the packages used in this project and how to install t
 
 `docker-compose up`  to start the docker container
 `npm install` to install all dependencies
-`npm run db-up` to set up the database and get access via http://127.0.0.1:5432
+`db-migrate up` to set up the database and get access via http://127.0.0.1:5432
 `npm run build` to build the app
 
 
@@ -81,14 +81,18 @@ Bellow are the environmental variables that needs to be set in a `.env` file. Th
 ```
 PORT = 127.0.0.1
 POSTGRES_HOST= "127.0.0.1"
-POSTGRES_USER= "nhuy"
-POSTGRES_PASSWORD="12345"
+POSTGRES_USER= "###"
+POSTGRES_PASSWORD="###"
 POSTGRES_DB="storefront"
+TOKEN_KEY="thisisakey"
+ENV=dev
+BCRYPT_PASSWORD=word-hard-play-hard
+SALT_ROUNDS="10"
 
 ```
 
 ## Start App
-`yarn watch` or `npm run watch`
+`yarn watch` or `npm run start`
 
 !['start server'](./docs/start.png)
 

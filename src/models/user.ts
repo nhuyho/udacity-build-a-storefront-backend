@@ -38,20 +38,13 @@ export class UserStore {
         parseInt(process.env.SALT_ROUNDS as string, 10)
       );
       const connection = await Client.connect();
-      const { rows } = await connection.query(sql, [
-        firstname,
-        lastname,
-        username,
-        hash,
-      ]);
+      const { rows } = await connection.query(sql, [firstname, lastname, username, hash]);
 
       connection.release();
 
       return rows[0];
     } catch (err) {
-      throw new Error(
-        `Could not add new user ${firstname} ${lastname}. ${err}`
-      );
+      throw new Error(`Could not add new user ${firstname} ${lastname}. ${err}`);
     }
   }
 
@@ -69,8 +62,7 @@ export class UserStore {
 
   async update(id: number, newUserData: BaseUser): Promise<User> {
     try {
-      const sql =
-        'UPDATE users SET firstname = $1, lastname = $2 WHERE id = $3 RETURNING *';
+      const sql = 'UPDATE users SET firstname = $1, lastname = $2 WHERE id = $3 RETURNING *';
       const connection = await Client.connect();
       const { rows } = await connection.query(sql, [
         newUserData.firstname,
@@ -100,18 +92,13 @@ export class UserStore {
 
   async authenticate(username: string, password: string): Promise<User | null> {
     try {
-      const sql = 'SELECT password_digest FROM users WHERE userName=($1)';
+      const sql = 'SELECT password_digest FROM users WHERE username=($1)';
       const conn = await Client.connect();
-      const result = await conn.query(sql, [username]);
+      const { rows } = await conn.query(sql, [username]);
 
-      if (result.rows.length) {
-        const user = result.rows[0];
-        if (
-          bcrypt.compareSync(
-            password + process.env.BCRYPT_PASSWORD,
-            user.password_digest
-          )
-        ) {
+      if (rows.length > 0) {
+        const user = rows[0];
+        if (bcrypt.compareSync(password + process.env.BCRYPT_PASSWORD, user.password_digest)) {
           return user;
         }
       }

@@ -7,7 +7,6 @@ import { BaseAuthUser } from '../../models/user';
 import app from '../../server';
 
 const request = supertest(app);
-const SECRET = process.env.TOKEN_KEY as Secret;
 
 describe('Order Handler', () => {
   let token: string;
@@ -26,8 +25,8 @@ describe('Order Handler', () => {
     };
 
     const { body: userBody } = await request.post('/users/create').send(userData);
-
     token = userBody;
+
     spyOn(OrderStore.prototype, 'create').and.returnValue(
       Promise.resolve({
         id: 1,
@@ -41,12 +40,37 @@ describe('Order Handler', () => {
         status: true,
       })
     );
+
+    spyOn(OrderStore.prototype, 'update').and.returnValue(
+      Promise.resolve({
+        id: 2,
+        products: [
+          {
+            product_id: 5,
+            quantity: 5,
+          },
+        ],
+        user_id: 3,
+        status: false,
+      })
+    );
   });
 
   it('should create order endpoint', async (done) => {
-    const res = await request.post('/orders/create').set('Authorization', 'Bearer ' + token);
-    console.log(res.body);
-    console.log(res);
+    const res = await request
+      .post('/orders/create')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        id: 1,
+        products: [
+          {
+            product_id: 5,
+            quantity: 5,
+          },
+        ],
+        user_id: 3,
+        status: true,
+      });
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -73,7 +97,7 @@ describe('Order Handler', () => {
       });
   });
 
-  it('gets the read endpoint', async (done) => {
+  it('should gets the read endpoint', async (done) => {
     request
       .get(`/orders/1`)
       .set('Authorization', 'bearer ' + token)
@@ -83,30 +107,9 @@ describe('Order Handler', () => {
       });
   });
 
-  it('gets the update endpoint', async (done) => {
-    const updateOrder = {
-      products: [
-        {
-          product_id: 1,
-          quantity: 7,
-        },
-      ],
-      user_id: 3,
-      status: true,
-    };
+  it('should gets the delete endpoint', async (done) => {
     request
-      .put(`/orders/1`)
-      .send({ id: 1, ...updateOrder, status: false })
-      .set('Authorization', 'bearer ' + token)
-      .then((res) => {
-        expect(res.status).toBe(200);
-        done();
-      });
-  });
-
-  it('gets the delete endpoint', async (done) => {
-    request
-      .delete(`/orders/1`)
+      .delete(`/orders/2`)
       .set('Authorization', 'bearer ' + token)
       .then((res) => {
         expect(res.status).toBe(200);
