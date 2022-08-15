@@ -114,9 +114,9 @@ const authenticate = async (req: Request, res: Response) => {
 
 export default function userRoutes(app: Application) {
   app.get('/users', index);
-  app.get('/users/:id', read);
   app.post('/users/create', create);
-  app.post('/users/authenticate', authenticate);
+  app.get('/users/:id', read);
   app.put('/users/:id', verifyToken, update);
   app.delete('/users/:id', verifyToken, deleteUser);
+  app.post('/users/authenticate', authenticate);
 }

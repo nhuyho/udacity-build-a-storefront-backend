@@ -1,3 +1,4 @@
+
 CREATE TABLE products (
   id    SERIAL PRIMARY KEY,
   name  VARCHAR(250) NOT NULL,
@@ -6,9 +7,9 @@ CREATE TABLE products (
 
 CREATE TABLE users (
   id              SERIAL PRIMARY KEY,
-  userName        VARCHAR(250) NOT NULL,
-  firstName       VARCHAR(250) NOT NULL,
-  lastName        VARCHAR(250) NOT NULL,
+  username        VARCHAR(250) NOT NULL,
+  firstname       VARCHAR(250) NOT NULL,
+  lastname        VARCHAR(250) NOT NULL,
   password_digest VARCHAR(250) NOT NULL
 );
 

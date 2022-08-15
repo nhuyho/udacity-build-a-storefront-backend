@@ -36,8 +36,6 @@ describe('User Model', () => {
 
   it('should create a user', async () => {
     const createdUser = await createUser(user);
-    console.log(createdUser);
-
     if (createdUser) {
       expect(createdUser.username).toBe(user.username);
       expect(createdUser.firstname).toBe(user.firstname);

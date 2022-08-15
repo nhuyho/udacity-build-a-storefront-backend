@@ -65,7 +65,7 @@ This section contains all the packages used in this project and how to install t
 ### Create Databases
 We shall create the dev and test database.
 
-- connect to the default postgres database as the server's root user `psql -U storefront`
+- connect to the default postgres database as the server's root user `psql -U postgres`
 
 ### Migrate Database
 Navigate to the root directory and run the command below to migrate the database 

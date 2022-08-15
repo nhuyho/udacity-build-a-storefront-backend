@@ -1,117 +1,116 @@
-import { BaseOrder } from '../../models/order';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import supertest from 'supertest';
+import jwt, { Secret } from 'jsonwebtoken';
+import { BaseOrder, OrderStore } from '../../models/order';
+import { BaseProduct } from '../../models/product';
+import { BaseAuthUser } from '../../models/user';
 import app from '../../server';
-import { Secret } from 'jsonwebtoken';
-import request from 'supertest';
 
-// const request = supertest(app);
+const request = supertest(app);
 const SECRET = process.env.TOKEN_KEY as Secret;
 
 describe('Order Handler', () => {
   let token: string;
-  let order: BaseOrder;
-  let user_id: number;
-  let product_id: number;
-  let order_id: number;
 
-  beforeAll(async function () {
-    const { body: userBody } = await request(app).post('/users/create').send({
+  beforeAll(async () => {
+    const userData: BaseAuthUser = {
       username: 'ChrisAnne',
       firstname: 'Chris',
       lastname: 'Anne',
       password: 'password123',
-    });
+    };
+
+    const productData: BaseProduct = {
+      name: 'Shoes',
+      price: 234,
+    };
+
+    const { body: userBody } = await request.post('/users/create').send(userData);
 
     token = userBody;
-    // @ts-ignore
-    const { user } = jwt.verify(token, SECRET);
-    user_id = user.id;
-
-    const { body: productBody } = await request(app)
-      .post('/products/create')
-      .set('Authorization', 'bearer ' + token)
-      .send({
-        name: 'Basil Barramunda',
-        price: 29,
-      });
-    product_id = productBody.id;
-  });
-
-  afterAll(async function () {
-    await request(app)
-      .delete(`/users/${user_id}`)
-      .set('Authorization', 'bearer ' + token);
-    await request(app)
-      .delete(`/products/${product_id}`)
-      .set('Authorization', 'bearer ' + token);
-  });
-
-  it('gets the create endpoint', function (done) {
-    request(app)
-      .post('/orders/create')
-      .send({
+    spyOn(OrderStore.prototype, 'create').and.returnValue(
+      Promise.resolve({
+        id: 1,
         products: [
           {
-            product_id,
-            quantity: 1,
+            product_id: 5,
+            quantity: 5,
           },
         ],
-        user_id,
+        user_id: 3,
         status: true,
       })
-      .set({ Authorization: 'bearer ' + token })
-      .then((res) => {
-        // const { body, status } = res;
-        console.log(res);
+    );
+  });
 
+  it('should create order endpoint', async (done) => {
+    const res = await request.post('/orders/create').set('Authorization', 'Bearer ' + token);
+    console.log(res.body);
+    console.log(res);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      id: 1,
+      products: [
+        {
+          product_id: 5,
+          quantity: 5,
+        },
+      ],
+      user_id: 3,
+      status: true,
+    });
+    done();
+  });
+
+  it('gets the index endpoint', async (done) => {
+    request
+      .get('/orders')
+      .set('Authorization', 'bearer ' + token)
+      .then((res) => {
         expect(res.status).toBe(200);
-        order_id = res.body.id;
         done();
       });
   });
 
-  // it('gets the index endpoint', function (done) {
-  //   request(app)
-  //     .get('/orders')
-  //     .set('Authorization', 'bearer ' + token)
-  //     .then((res) => {
-  //       expect(res.status).toBe(200);
-  //       done();
-  //     });
-  // });
+  it('gets the read endpoint', async (done) => {
+    request
+      .get(`/orders/1`)
+      .set('Authorization', 'bearer ' + token)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        done();
+      });
+  });
 
-  // it('gets read endpoint', function (done) {
-  //   request(app)
-  //     .get(`/orders/${order_id}`)
-  //     .set('Authorization', 'bearer ' + token)
-  //     .then((res) => {
-  //       expect(res.status).toBe(200);
-  //       done();
-  //     });
-  // });
+  it('gets the update endpoint', async (done) => {
+    const updateOrder = {
+      products: [
+        {
+          product_id: 1,
+          quantity: 7,
+        },
+      ],
+      user_id: 3,
+      status: true,
+    };
+    request
+      .put(`/orders/1`)
+      .send({ id: 1, ...updateOrder, status: false })
+      .set('Authorization', 'bearer ' + token)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        done();
+      });
+  });
 
-  // it('gets the update endpoint', function (done) {
-  //   const newOrder: BaseOrder = {
-  //     ...order,
-  //     status: false,
-  //   };
-
-  //   request(app)
-  //     .put(`/orders/${order_id}`)
-  //     .send(newOrder)
-  //     .set('Authorization', 'bearer ' + token)
-  //     .then((res) => {
-  //       expect(res.status).toBe(200);
-  //       done();
-  //     });
-  // });
-
-  // it('gets the delete endpoint', function (done) {
-  //   request(app)
-  //     .delete(`/orders/${order_id}`)
-  //     .set('Authorization', 'bearer ' + token)
-  //     .then((res) => {
-  //       expect(res.status).toBe(200);
-  //       done();
-  //     });
-  // });
+  it('gets the delete endpoint', async (done) => {
+    request
+      .delete(`/orders/1`)
+      .set('Authorization', 'bearer ' + token)
+      .then((res) => {
+        expect(res.status).toBe(200);
+        done();
+      });
+  });
 });

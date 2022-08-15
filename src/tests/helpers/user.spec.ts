@@ -18,34 +18,6 @@ describe('User Handler', () => {
   let token: string,
     userId = 1;
 
-  // it('should require authorization on every endpoint', (done) => {
-  //   request.get('/users').then((res) => {
-  //     expect(res.status).toBe(401);
-  //     done();
-  //   });
-
-  //   request.get(`/users/${userId}`).then((res) => {
-  //     expect(res.status).toBe(401);
-  //     done();
-  //   });
-
-  //   request
-  //     .put(`/users/${userId}`)
-  //     .send({
-  //       firstName: userData.firstname + 'test',
-  //       lastName: userData.lastname + 'test',
-  //     })
-  //     .then((res) => {
-  //       expect(res.status).toBe(401);
-  //       done();
-  //     });
-
-  //   request.delete(`/users/${userId}`).then((res) => {
-  //     expect(res.status).toBe(401);
-  //     done();
-  //   });
-  // });
-
   it('gets the create endpoint', (done) => {
     request
       .post('/users/create')
@@ -103,7 +75,7 @@ describe('User Handler', () => {
 
   it('get the auth endpoint', (done) => {
     request
-      .post('/users/auth')
+      .post('/users/authenticate')
       .send({
         username: userData.username,
         password: userData.password,

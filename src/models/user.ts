@@ -1,8 +1,6 @@
 import bcrypt from 'bcrypt';
 import Client from '../database';
 
-const { BCRYPT_PASSWORD, SALT_ROUNDS } = process.env;
-
 export interface BaseUser {
   firstname: string;
   lastname: string;
@@ -29,29 +27,31 @@ export class UserStore {
       throw new Error(`Can not get users. ${err}`);
     }
   }
+  async create(user: BaseAuthUser): Promise<User> {
+    const { firstname, lastname, username, password } = user;
 
-  async create(u: BaseAuthUser): Promise<User> {
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const conn = await Client.connect();
       const sql =
-        'INSERT INTO users (firstName, lastName, userName, password_digest) VALUES($1, $2, $3, $4) RETURNING *';
-      const pepper: string = process.env.BCRYPT_PASSWORD as string;
-      const salt: string = process.env.SALT_ROUNDS as string;
-      const hash = bcrypt.hashSync(u.password + pepper, parseInt(salt));
-
-      const result = await conn.query(sql, [
-        u.firstname,
-        u.lastname,
-        u.username,
+        'INSERT INTO users (firstname, lastname, username, password_digest) VALUES($1, $2, $3, $4) RETURNING *';
+      const hash = bcrypt.hashSync(
+        password + process.env.BCRYPT_PASSWORD,
+        parseInt(process.env.SALT_ROUNDS as string, 10)
+      );
+      const connection = await Client.connect();
+      const { rows } = await connection.query(sql, [
+        firstname,
+        lastname,
+        username,
         hash,
       ]);
-      const user = result.rows[0];
-      conn.release();
-      return user;
+
+      connection.release();
+
+      return rows[0];
     } catch (err) {
-      throw new Error(`unable create user (${u.username}): ${err}`);
+      throw new Error(
+        `Could not add new user ${firstname} ${lastname}. ${err}`
+      );
     }
   }
 
@@ -70,7 +70,7 @@ export class UserStore {
   async update(id: number, newUserData: BaseUser): Promise<User> {
     try {
       const sql =
-        'UPDATE users SET firstName = $1, lastName = $2 WHERE id = $3 RETURNING *';
+        'UPDATE users SET firstname = $1, lastname = $2 WHERE id = $3 RETURNING *';
       const connection = await Client.connect();
       const { rows } = await connection.query(sql, [
         newUserData.firstname,
@@ -107,7 +107,10 @@ export class UserStore {
       if (result.rows.length) {
         const user = result.rows[0];
         if (
-          bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password_digest)
+          bcrypt.compareSync(
+            password + process.env.BCRYPT_PASSWORD,
+            user.password_digest
+          )
         ) {
           return user;
         }

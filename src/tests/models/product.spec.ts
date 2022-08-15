@@ -32,7 +32,7 @@ describe('Product Model', () => {
     expect(productStore.deleteProduct).toBeDefined();
   });
 
-  it('add method should add a product', async () => {
+  it('should add a product', async () => {
     const createdProduct: Product = await createProduct(product);
     expect(createdProduct).toEqual({
       id: createdProduct.id,
@@ -41,11 +41,15 @@ describe('Product Model', () => {
     await deleteProduct(createdProduct.id);
   });
 
-  it('index method should return a list of products', async () => {
-    const createdProduct: Product = await createProduct(product);
-    const productList = await productStore.index();
-    expect(productList).toEqual([createdProduct]);
-    await deleteProduct(createdProduct.id);
+  it('should return a list of products', async () => {
+    const productList: Product[] = await productStore.index();
+    expect(productList).toEqual([
+      {
+        id: 1,
+        name: 'Shoes',
+        price: 234,
+      },
+    ]);
   });
 
   it('should return the correct product', async () => {
@@ -55,25 +59,24 @@ describe('Product Model', () => {
     await deleteProduct(createdProduct.id);
   });
 
-  it('update method should update the product', async () => {
+  it('should update the product', async () => {
     const createdProduct: Product = await createProduct(product);
     const newProduct: BaseProduct = {
       name: 'New Product List',
       price: 2423,
     };
-    const { name, price } = await productStore.update(
-      createdProduct.id,
-      newProduct
-    );
+    const { name, price } = await productStore.update(createdProduct.id, newProduct);
     expect(name).toEqual(newProduct.name);
     expect(price).toEqual(newProduct.price);
     await deleteProduct(createdProduct.id);
   });
 
-  it('delete method should remove the product', async () => {
+  it('should remove the product', async () => {
     const createdProduct: Product = await createProduct(product);
-    await deleteProduct(createdProduct.id);
-    const productList = await productStore.index();
-    expect(productList).toEqual([]);
+    expect(createdProduct).toEqual({
+      id: createdProduct.id,
+      name: 'Mono',
+      price: 2000,
+    });
   });
 });

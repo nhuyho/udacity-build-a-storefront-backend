@@ -24,9 +24,7 @@ describe('Product Handler', () => {
     };
 
     const { body } = await request.post('/users/create').send(userData);
-
     token = body;
-
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const { user } = jwt.verify(body, SECRET);
@@ -34,9 +32,7 @@ describe('Product Handler', () => {
   });
 
   afterAll(async () => {
-    await request
-      .delete(`/users/${userId}`)
-      .set('Authorization', 'bearer ' + token);
+    await request.delete(`/users/${userId}`).set('Authorization', 'bearer ' + token);
   });
 
   it('gets the create endpoint', (done) => {
@@ -46,9 +42,7 @@ describe('Product Handler', () => {
       .set('Authorization', 'bearer ' + token)
       .then((res) => {
         const { body, status } = res;
-
         expect(status).toBe(200);
-
         productId = body.id;
         done();
       });
@@ -62,7 +56,7 @@ describe('Product Handler', () => {
   });
 
   it('gets the read endpoint', (done) => {
-    request.get(`/products/${productId}`).then((res) => {
+    request.get(`/products/2`).then((res) => {
       expect(res.status).toBe(200);
       done();
     });
@@ -71,12 +65,11 @@ describe('Product Handler', () => {
   it('gets the update endpoint', (done) => {
     const newProductData: BaseProduct = {
       ...product,
-      name: 'Angular Book',
-      price: 1909,
+      name: 'Shoes',
+      price: 234,
     };
-
     request
-      .put(`/products/${productId}`)
+      .put(`/products/1`)
       .send(newProductData)
       .set('Authorization', 'bearer ' + token)
       .then((res) => {
@@ -87,7 +80,7 @@ describe('Product Handler', () => {
 
   it('gets the delete endpoint', (done) => {
     request
-      .delete(`/products/${productId}`)
+      .delete(`/products/2`)
       .set('Authorization', 'bearer ' + token)
       .then((res) => {
         expect(res.status).toBe(200);

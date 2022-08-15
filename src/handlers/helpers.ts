@@ -16,14 +16,12 @@ export const verifyToken = (
   next: NextFunction
 ) => {
   if (!req.headers.authorization) {
-    res.status(403).json({ error: 'No credentials sent!' });
+    res.status(401).json({ error: 'Access denied, invalid token' });
     return false;
   }
   try {
-    const authHead: string | undefined = req.headers.authorization;
-    const token: string = authHead ? authHead.split(' ')[1] : '';
-    const decoded: string | object = jwt.verify(token, SECRET as string);
-    res.locals.userData = decoded;
+    const token = req.headers.authorization.split(' ')[1];
+    jwt.verify(token, SECRET);
     next();
   } catch (error) {
     res.status(401);
