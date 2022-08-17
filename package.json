@@ -4,7 +4,7 @@
     "description": "Build a JavaScript API based on a requirements given by the stakeholders. You will architect the database, tables, and columns to fulfill the requirements.",
     "main": "server.ts",
     "scripts": {
-        "watch": "npx tsc-watch --onSuccess 'node dist/server.js'",
+        "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess \"node ./dist/server.js\"",
         "start": "nodemon server.ts",
         "lint": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
         "test": "db-migrate --env test up && ENV=test jasmine-ts --config=jasmine.json || db-migrate --env test down",
