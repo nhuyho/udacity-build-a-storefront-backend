@@ -46,7 +46,6 @@ Table: Product (id:serial[primary key], name:varchar(50)[not null], price:numeri
 Table: User (id:serial[primary key], firstname: varchar (50)[not null], lastname:varchar(50)[not null], password:varchar(60)[not null])
 ```
 #### Orders
-- id
 - id of each product in the order
 - quantity of each product in the order
 - user_id
@@ -54,4 +53,18 @@ Table: User (id:serial[primary key], firstname: varchar (50)[not null], lastname
 
 ```
 Table: Orders (id:serial[primary key], product_id:integer(foreign key to products table), quantity:integer[default 1], user_id:integer(foreign key to users table), status:enum(active, complete)[not null])
+```
+
+#### Table: order_products
+
+- order_id INTEGER REFERENCES orders(id)
+- product_id INTEGER REFERENCES products(id)
+- quantity INTEGER
+
+```
+Table: Order Product (
+  order_id: integer(not null) REFERENCES orders (id),
+  product_id: integer(not null) REFERENCES products (id),
+  quantity: integer(not null)
+)
 ```
